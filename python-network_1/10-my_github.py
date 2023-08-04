@@ -1,16 +1,21 @@
 #!/usr/bin/python3
-'''script that takes your GitHub credentials (username and password)
- and uses the GitHub API to display your id
-'''
-import requests
-import sys
-
+"""
+Python script to list 10 most recent commits
+to repository 'rails' by user 'rails'
+using GitHub API
+"""
 if __name__ == "__main__":
-    username = sys.argv[1]
-    password = sys.argv[2]
-    url = f"https://api.github.com/users/{username}"
-    headers = {'accept': 'application/vnd.github+json',
-               'authorization': f"Bearer {password}"}
-    response = requests.get(url, headers=headers)
-    json_data = response.json()
-    print(json_data.get('id'))
+    import requests
+    from sys import argv
+    url = 'https://api.github.com/repos/{}/{}/commits'.format(
+        argv[2], argv[1])
+    response = requests.get(url)
+    json_list = response.json()
+    count = 0
+    for obj in json_list:
+        if count == 10:
+            break
+        print("{}: {}".format(
+            obj.get('sha'),
+            obj.get('commit').get('author').get('name')))
+        count = count + 1
