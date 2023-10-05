@@ -1,9 +1,30 @@
 #!/usr/bin/node
-
+const { argv } = require('process');
 const request = require('request');
-const url = process.argv[2];
-const result = {};
 
-request.get(url, (err, resp, body) => {
+request(argv[2], (err, response, body) => {
   if (err) {
-    throw err;
+    console.log(err);
+    return;
+  }
+  const data = JSON.parse(body);
+  const objs = {};
+  for (let i = 0; i < data.length; i++) {
+    const userId = data[i].userId;
+    const completed = data[i].completed;
+    if (objs[`${userId}`] === undefined) {
+      if (!completed) {
+        continue;
+      } else {
+        objs[`${userId}`] = 1;
+      }
+    } else {
+      if (!completed) {
+        continue;
+      } else {
+        objs[`${userId}`]++;
+      }
+    }
+  }
+  console.log(objs);
+});
